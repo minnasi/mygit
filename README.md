@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
  ------- 프로젝트 설명 첨부 --------
@@ -390,3 +391,8 @@ SHOW ME THE MOVIE
                   Hikari CP 를 사용해서 Mybatis 연동완료
                   Controller, Service, DAO, Domain 패키지 구조 완성
                   메인, 영화상세페이지 제작완료 후 push
+=======
+# mygit
+실습용
+vvvvvvv   ujjjhjh
+>>>>>>> branch 'master' of https://github.com/minnasi/mygit.git

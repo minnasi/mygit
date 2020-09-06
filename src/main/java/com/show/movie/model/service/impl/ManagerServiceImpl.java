@@ -23,6 +23,7 @@ import lombok.extern.log4j.Log4j;
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
+	
 	@Autowired
 	ManagerDAO managerDAO;
 	
@@ -37,6 +38,7 @@ public class ManagerServiceImpl implements ManagerService {
 		if (images.length > 1)
 			movie.setMoviePosterBG(images[1]);
 		managerDAO.insertMovie(movie);
+		System.out.println("ssdhdshdhdshdsh");
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		managerDAO.insertTheater(movieDate,movieName, theaterName, movieStartTime, movieEndTime);
 		
-		// 메소드화 시켰어야됬는데 ㅜㅜ  시간이 없옹 . 하드코딩  ON !
+		// 硫붿냼�뱶�솕 �떆耳곗뼱�빞�맟�뒗�뜲 �뀥�뀥  �떆媛꾩씠 �뾾�샊 . �븯�뱶肄붾뵫  ON !
 		String data[] = {"A","B","C","D","E","F","G","H","I","J"};
 		for(int i = 1 ; i <= managerDAO.countTheater()-lastTheaterCode; i++) {
 			for(int j = 0 ; j < 10; j++) {
