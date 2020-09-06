@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.show.movie.model.dao.BookingDAO">
+	<resultMap id="booking" type="booking">
+		<id column="bookingCode" property="bookingCode" />
+		<result column="bookingPeople" property="bookingPeople" />
+		<result column="bookingSeat" property="bookingSeat" />
+		<result column="bookingDate" property="bookingDate" />
+		<association property="movie" javaType="movie">
+			<id column="movieCode" property="movieCode" />
+			<result column="movieName" property="movieName" />
+			<result column="moviePoster" property="moviePoster" /> 
+		</association>
+		<association property="movieInfo" javaType="movieInfo">
+			<id column="movieInfoCode" property="movieInfoCode" />
+			<result column="movieDate" property="movieDate" />
+			<association property="theater" javaType="theater">
+				<id column="theaterCode" property="theaterCode" />
+				<result column="theaterName" property="theaterName" />
+			</association>
+		</association>
+		<association property="branch" javaType="branch">
+			<id column="branchCode" property="branchCode" />
+			<result column="branchName" property="branchName" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="seat" type="seat">
+		<id column="seatCode" property="seatCode" />
+		<result column="movieInfoCode" property="movieInfoCode" />
+		<result column="seatName" property="seatName" />
+		<result column="seatStatus" property="seatStatus" />
+	</resultMap>
+
+	<select id="getAllbooking" resultMap="booking"
+		parameterType="string">
+		select bookingCode ,bookingSeat, movieName , branchName,
+		theaterName, movieDate, moviePoster,
+		bookingDate, bookingPeople
+		from getBooking 
+		where userId=#{userId}
+		AND bookingState = 0
+	</select>
+	 
+
+	 
+	 <!--  예매완료 후 좌석 상태 업데이트 -->
+	 <update id="updateSeatStatus" >
+ 		UPDATE seat SET seatStatus=1 
+ 		WHERE seatName = #{seatName} 
+ 		AND  movieInfoCode = #{movieInfoCode} 
+ 	</update>
+	 
+	 <!--  예매내역 추가 -->
+ 	<insert id="insertBookingInfo" >
+ 	 	INSERT INTO booking (userId, movieInfoCode, bookingDate, bookingSeat, bookingPeople, bookingPrice,bookingState)
+ 	    VALUES
+ 		  ( #{booking.user.userId} , #{booking.movieInfo.moiveInfoCode} ,now(), #{booking.bookingSeat}, #{booking.bookingPeople}, #{booking.bookingPrice}, 0)
+ 	</insert>
+	
+<!-- 	<insert id="insertBookingInfo" >
+ 	 	INSERT INTO booking (userId, movieInfoCode, bookingDate, bookingSeat, bookingPeople, bookingPrice,bookingState)
+ 	    VALUES
+ 		 <foreach item="item" index="index" collection="seatName" separator=",">
+ 		  ( #{booking.user.userId} , #{booking.movieInfo.moiveInfoCode} ,now(), #{item}, #{booking.bookingPeople}, #{booking.bookingPrice}, 0)
+ 		 </foreach>
+ 	</insert> -->
+	
+	<!-- booking code 추가 -->
+</mapper>
+
+<!-- 
+Create View getBooking AS SELECT 
+booking.bookingCode, 
+booking.bookingSeat,
+booking.bookingState,
+movie.movieName, 
+movie.moviePoster,
+branch.branchName, 
+theater.theaterName, 
+movieInfo.movieDate, 
+movieInfo.movieStartTime , 
+booking.bookingDate, 
+booking.bookingPeople, 
+booking.userId 
+from booking, movieInfo, theater, branch , user, movie 
+where booking.userId = user.userId 
+AND movieInfo.movieCode = movie.movieCode 
+AND movieInfo.movieInfoCode = booking.movieInfoCode 
+AND theater.theaterCode = movieInfo.theaterCode 
+AND branch.branchCode = theater.branchCode
+ 
+ -->

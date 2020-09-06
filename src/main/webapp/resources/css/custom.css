@@ -1,0 +1,157 @@
+@charset "UTF-8";
+#header .util-area .right-link {
+	top:50px;	
+}
+
+#header .util-area .right-link a {
+	font-size:18px;
+}
+
+#contents{
+    width: 80%;
+    margin: auto;
+    padding-bottom: 100px;
+}
+
+#wrap{
+	 width: 430px;
+    margin: auto;
+    margin-top: 210px;
+    border: 2px solid #efeef1;
+}
+
+.layer-header{
+	 position: flex  !important;
+}
+
+.gnb-txt-login{
+	background-image: url(/images/login.png);
+	width:10%;
+}
+
+.gnb-txt-sighup{
+	background-image: url(/images/sighup.png);
+	width:10%;
+	}
+	
+.gnb-txt-myPage{
+	background-image: url(/images/myPage.png);
+	width:10%;
+	}
+.gnb-txt-movies{
+	background-image: url(/images/movie.PNG);
+	width:10%;
+}
+
+.gnb-txt-ticketting{
+	background-image: url(/images/ticketting.PNG);
+	width:10%;
+}
+.gnb-txt-theaters{
+	background-image: url(/images/theater.PNG);
+	width:10%;
+}
+.gnb-txt-logout{
+	background-image: url(/images/logOut.PNG);
+	width:10%;
+}
+
+
+.sighUpLogo{
+	cursor: pointer;
+	display: block;
+    width: 147px;
+    height: 60px;
+    margin: auto;
+    padding: 0;
+    font-size: 0;
+    line-height: 0;
+    background: url(/images/movieLogo.PNG) center center no-repeat; !important
+}
+
+.gnb-txt-user{
+	right: 310px;
+    position: absolute;
+    top: -38px;
+    height: 38px;
+    background-position: center 0;
+    background-repeat: no-repeat;
+    width:10%;
+}
+
+.getMovieImages{
+	display:block;
+}
+.widthImage{
+	width:400px;
+}
+
+.selectThumbnail{
+	margin: 20px;
+}
+
+.thumbNailImages{
+	margin:auto;
+}
+
+.managerButton{
+	width: 120px;
+    display: inline-block;
+    height: 40px;
+    margin: 0;
+    padding: 0 15px;
+    text-align: center;
+    line-height: 34px;
+    color: white;
+    font-weight: 400;
+    border-radius: 4px;
+    font-family: NanumBarunGothic,Dotum,'돋움',sans-serif;
+    text-decoration: none;
+    border: 1px solid #503396;
+    vertical-align: middle;
+    background-color: #503396;
+    cursor: pointer;
+}
+
+.inner-wrap > .timeTable{
+	display:none;
+}
+
+.timeTable{
+	margin-bottom:300px;
+}
+
+.inner-wrap > .on{
+	display:block;
+}
+
+.width1000{
+	width:1000px;
+}
+
+.theater-list-box > .theater-list{
+	display:none;
+}
+.theater-list-box > .on{
+	display:block;
+}
+
+.theater-list{
+	width : 100%;
+}
+#mCSB_1{
+	overflow-y:auto; 
+}
+#mCSB_21{
+	overflow-y:auto; 
+}
+.top-100{
+    top: -100px;
+}
+.time-list-table .on{
+	color : #ffaf13 !important
+}
+.seat-select-section .seat-result .wrap .btn-group .button{
+	witdh:100% !important;
+}
+

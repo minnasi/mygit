@@ -1,0 +1,22 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<http auto-config="true" use-expressions="true">
+        <intercept-url pattern="/member/**"
+            access="hasAnyRole('ROLE_MEMBER','ROLE_ADMIN')" />
+        <intercept-url pattern="/user/**"
+            access="hasAnyRole('ROLE_USER','ROLE_MEMBER','ROLE_ADMIN')" />
+        <intercept-url pattern="/admin/**"
+            access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/**" access="permitAll" />
+    </http>
+
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="user" password="{noop}password" authorities="ROLE_USER" />
+                <user name="member" password="{noop}password" authorities="ROLE_MEMBER" />
+                <user name="admin" password="{noop}password" authorities="ROLE_ADMIN" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+ -->

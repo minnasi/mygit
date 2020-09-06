@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.show.movie.dao.UserDao">
+
+	<resultMap id="user" type="user">
+		<id column="userId" property="userId" />
+		<result column="userPassword" property="userPassword" />
+		<result column="userName" property="userName" />
+		<result column="userPhoneNumber" property="userPhoneNumber" />
+		<result column="userBirth" property="userBirth" />
+		<result column="userCode" property="userCode" />
+	</resultMap> 
+
+	<!-- 
+		private String userId;
+	private String userPassword;
+	private String userName;
+	private String userPhoneNumber;
+	private String userBirth;
+	private int userCode;
+	 -->
+
+    <!-- 로그인  -->
+	
+	<select id="getUser" resultMap="user">
+		SELECT * FROM user WHERE userId = #{userId}
+	</select>
+ 
+
+  	<insert id="insertNewUser" parameterType="user">
+		INSERT INTO user(userId,  userName,  userCode)
+		VALUES ( #{userId}, #{userName},   #{userCode} )
+	</insert> 
+  
+</mapper>

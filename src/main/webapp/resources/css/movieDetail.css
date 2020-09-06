@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.inner-wrap > div{
+	display: none;	
+}
+
+.inner-wrap > .on{
+	display: block;	
+}

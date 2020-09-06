@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.show.movie.dao.MovieDao">
+ 
+ 	<resultMap id="movie" type="movie">
+		<id column="movieCode" property="movieCode" />
+		<result column="movieName" property="movieName" />
+		<result column="movieAudience" property="movieAudience" />
+		<result column="movieTicketRate" property="movieTicketRate" />
+		<result column="movieTitle" property="movieTitle" />
+		<result column="movieSynopsis" property="movieSynopsis" />
+		<result column="moviePrice" property="moviePrice" />
+		<result column="moviePoster" property="moviePoster" />
+		<result column="moviePosterBG" property="moviePosterBG" />
+	</resultMap> 
+	
+			<!-- ID : JOIN 하는 POJO 클래스     type : FROM 대상인 POJO클래스 -->
+			<!--  resultMap 에는 해당 객체의 모든 속성을 넣어줄 필요가 없어서 @Alias를 똑같이 해줄필요가 없음.-->
+			<!-- ex) MovieInfo안에 branch,Movie가 있는데 movie로 바인딩 후 movieInfo로 리턴 할 수 있다.-->
+			<!-- ↓설명 : <select  resultMap ="mvInfo">로 접근하면   movieInfo 객체로 반환함 -->
+	<resultMap id="mvInfo" type="movieInfo">
+				<!-- column : DB 컬럼명    property : POJO 클래스의 속성명-->
+		<result column="moiveInfoCode" property="moviePosterBG" />
+		<!-- <result column="movieDate" property="movieDate" /> Date타입 에러떠서 잠시..-->
+		<result column="movieStartTime" property="movieStartTime" />
+		<result column="movieEndTime" property="movieEndTime" />
+		 		<!-- Collection은 ofType으로  -->
+				<association property="movie" javaType="movie">
+						<result column="movieCode" property="movieCode" />
+						<result column="movieName" property="movieName" />
+						<result column="movieAudience" property="movieAudience" />
+						<result column="movieTicketRate" property="movieTicketRate" />
+						<result column="movieTitle" property="movieTitle" />
+						<result column="movieSynopsis" property="movieSynopsis" />
+						<result column="moviePrice" property="moviePrice" />
+						<result column="moviePoster" property="moviePoster" />
+						<result column="moviePosterBG" property="moviePosterBG" />
+				</association>
+				<association property="theater" javaType="theater">
+					<result column="theaterCode" property="theaterCode" />
+					<result column="theaterleftSeat" property="theaterLeftSeat" />
+					<result column="theaterAllSeat" property="theaterAllSeat" />
+				</association>
+				<association property="branch" javaType="Branch">
+					<result column="branchCode" property="branchCode" />
+					<result column="branchName" property="branchName" />
+					<association property="location" javaType="Location">
+						<result column="locationCode" property="locationCode" /> 
+						<result column="locationName" property="locationName" />
+					</association>
+				</association>
+	</resultMap>
+
+ 
+	<select id="getMovie" resultMap="movie">
+	<!-- View로 처리좀 하고싶은데.. 강사님 HELP !! -->
+		SELECT movie.movieCode, movie.movieName, movie.movieAudience, movie.movieUpdate, movie.movieSynopsis,
+		movie.moviePoster, movie.moviePosterBG, ranking.movieTicketRate, rankPersent.movieTicketRatePersent
+		FROM movie,
+		(SELECT round( ( (SELECT movieAudience from movie where movieName= #{movieName}) / sum(movie.movieAudience)  )*100, 1) 
+		as movieTicketRatePersent FROM movie) AS rankPersent,
+		(SELECT movieCode, Rank() over(order by movieAudience DESC) as movieTicketRate FROM movie) AS ranking
+		 WHERE movie.movieCode = ranking.movieCode
+		 AND movie.movieName = #{movieName};
+	</select>
+	
+	<select id="getBranch" resultType="string" >
+		SELECT branch.branchName FROM branch, location
+		WHERE location.locationCode = branch.locationCode 
+		AND location.locationName = #{locationName} 
+	</select>
+	
+		
+	<select id="getMovieInfo" resultMap="mvInfo" parameterType="movieInfo">
+	<!--  getMovieInfo는 View Table -->
+		SELECT * FROM getMovieInfo		
+		WHERE movie.movieName = #{movie.movieName}
+		AND branch.branchName=  #{branch.branchName}
+	</select>
+	
+	
+	<!--  View Table 있는지 확인  : 있으면 1 리턴 -->
+	<select id="isView" resultType="int">
+		SELECT COUNT(*) countView FROM information_schema.tables 
+		WHERE table_schema = 'movie' AND table_name = 'getMovieInfo'
+	</select>
+	
+	<!--  return : void  -->
+	<select id="createViewGetMovieInfo">
+		CREATE VIEW getMovieInfo AS 
+		SELECT movie.movieName, movieInfo.movieStartTime, movieInfo.movieEndTime, 
+		branch.branchName, theater.theaterleftSeat,
+		 theater.theaterAllSeat,
+		 theater.theaterCode
+		FROM movie AS movie , movieInfo AS movieInfo, theater AS theater, branch AS branch
+		WHERE theater.theaterCode = movieinfo.theaterCode
+		AND movieinfo.movieCode = movie.movieCode 
+		AND theater.branchCode = branch.branchCode 
+		ORDER BY movieStartTime ASC;
+	</select>
+	
+<!-- 	
+		헤맨 것 : ViewTable을 Alias 해주면 접근이 안됬음 ㅜㅜ. 그래서 WHERE로 조건을 못줬음
+		해결 : resultMap으로 해결... 아 뻘짓했넹.. 왜 Mybatis에서 resultMap이랑 typeAlias가 
+		강력한 기능이라고 주장했는지 알았음.. 호우 ! 대박쓰
+		
+		SELECT movie.movieName as 'movie.movieName',  movieStartTime , movieEndTime,
+			   branch.branchName as 'branch.branchName', 
+			   theater.theaterleftSeat as 'theater.theaterleftSeat', 
+			   theater.theaterAllSeat as 'theater.theaterAllSeat', theater.theaterCode as 'theater.theaterCode' 
+		FROM theater, movieInfo, movie , branch 
+		WHERE theater.theaterCode = movieinfo.theaterCode
+		AND movieinfo.movieCode = movie.movieCode 
+		AND theater.branchCode = branch.branchCode 
+		AND movie.movieName = #{movie.movieName}
+		AND branch.branchName=  #{branch.branchName}
+		ORDER BY movieStartTime ASC; -->
+	
+	
+<!-- 	
+	getMovieInfo의 View Table 만드는 쿼리
+	
+	CREATE VIEW getMovieInfo AS 
+	SELECT movie.movieName, movieInfo.movieStartTime, movieInfo.movieEndTime, 
+	branch.branchName, theater.theaterleftSeat,
+	 theater.theaterAllSeat,
+	 theater.theaterCode
+	FROM movie AS movie , movieInfo AS movieInfo, theater AS theater, branch AS branch
+	WHERE theater.theaterCode = movieinfo.theaterCode
+	AND movieinfo.movieCode = movie.movieCode 
+	AND theater.branchCode = branch.branchCode 
+	ORDER BY movieStartTime ASC;
+ -->
+
+ </mapper> 
+  
+  

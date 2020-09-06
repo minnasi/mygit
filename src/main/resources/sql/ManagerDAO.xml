@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.show.movie.model.dao.ManagerDAO">
+
+	<resultMap id="movie" type="movie">
+		<id column="movieCode" property="movieCode" />
+		<result column="movieName" property="movieName" />
+		<result column="movieAudience" property="movieAudience" />
+		<result column="movieTicketRate" property="movieTicketRate" />
+		<result column="movieTitle" property="movieTitle" />
+		<result column="movieSynopsis" property="movieSynopsis" />
+		<result column="moviePrice" property="moviePrice" />
+		<result column="moviePoster" property="moviePoster" />
+		<result column="moviePosterBG" property="moviePosterBG" />
+		<result column="movieImages" property="movieImages" />
+		<result column="movieTime" property="movieTime" />
+	</resultMap>
+
+	<resultMap id="branch" type="branch">
+		<id column="branchCode" property="branchCode" />
+		<result column="branchName" property="branchName" />
+		<association property="location" javaType="location">
+			<result column="locationCode" property="locationCode" />
+		</association>
+	</resultMap>
+
+ 	<resultMap id="mvInfo" type="movieInfo">
+		<result column="movieDate" property="movieDate" />
+		<result column="movieStartTime" property="movieStartTime" />
+		<result column="movieEndTime" property="movieEndTime" />
+		<association property="movie" javaType="movie">
+			<result column="movieCode" property="movieCode" />
+			<result column="movieName" property="movieName" />
+			<result column="movieTime" property="movieTime" />
+		</association>
+		<association property="theater" javaType="theater">
+			<result column="theaterCode" property="theaterCode" />
+			<result column="theaterName" property="theaterName" />
+		</association>
+
+	</resultMap>
+ 
+
+
+
+	<insert id="insertMovie">
+		INSERT INTO movie (managerCode,
+		movieName,movieAudience,movieUpdate,
+		movieSynopsis, moviePoster,
+		moviePosterBG, movieImages, movieTime)
+		VALUES (
+		( SELECT managerCode FROM manager 
+		WHERE managerId=#{manager.managerId}),
+		#{movieName},0,NOW(),
+		#{movieSynopsis}, #{moviePoster},
+		#{moviePosterBG},
+		#{movieImages},#{movieTime}
+		)
+	</insert>
+
+	<select id="getMovieList" resultMap="movie">
+		SELECT
+		movieName, moviePoster, movieTime FROM movie
+		WHERE managerCode = (SELECT
+		managerCode FROM manager WHERE managerId = #{managerId})
+	</select>
+
+	<select id="getLocationList" resultType="location">
+		SELECT
+		location.locationCode, location.locationName, COUNT(*) AS countBranch
+		from location,branch
+		WHERE branch.locationCode = location.locationCode
+		GROUP BY location.locationCode;
+	</select>
+	
+	<select id="getBranchList" resultMap="branch"
+		parameterType="location">
+		SELECT * FROM movie.branch
+		<choose>
+			<when test='locationCode != null'>
+				WHERE locationCode = #{locationCode}
+			</when>
+			<!-- <otherwise> WHERE locationCode=1 </otherwise> -->
+		</choose>
+	</select>
+	
+	<select id="getTheaterCode" resultType="theater">
+	</select>
+	
+	<select id="getTheaterList" resultType="theater">
+		SELECT theaterCode,
+		theaterName, branchCode AS 'branch.branchCode' FROM movie.theater
+		WHERE branchCode =
+		(SELECT branchCode FROM branch WHERE branchName =
+		#{branchName});
+	</select>
+ 
+	<select id="getTimeScheduleInTheater" resultMap="mvInfo">
+			SELECT * FROM timeSchedule
+			where theaterCode = #{theaterNo} and movieDate = #{timeSchedule}
+	</select>
+
+
+	<!-- INSERT -->
+
+	<insert id="insertTheater">
+		INSERT INTO
+		movieInfo(movieCode, theaterCode,movieDate,movieStartTime, movieEndTime)
+		VALUES 
+		<foreach item="item" index="index" collection="theaterName"
+			separator=",">
+			<foreach item="time" index="timeIndex" collection="movieStartTime"
+			separator=",">
+			(
+			(SELECT movieCode FROM movie WHERE movieName =
+			#{movieName}),
+			(SELECT
+			theaterCode FROM theater WHERE theaterName =
+			#{item}),
+			(SELECT
+			date_format(#{movieDate},'%Y-%m-%d') FROM dual)
+			,#{time}, '${movieEndTime[timeIndex]}'
+			)
+			</foreach>
+		</foreach>
+		
+	</insert>
+
+	<!-- 시트테이블 만드는 쿼리 -->
+	 <insert id="insertSeat" >
+	 	insert into seat (movieInfoCode, seatName, seatStatus)
+	 	VALUES ( #{movieInfoCode}, #{seatName}, 0 )
+	 </insert>
+	 
+	 <select id="countTheater" resultType="int">
+		SELECT count(*) from movieInfo
+	</select>
+	
+	<select id="lastMovieInfoCode" resultType="int">
+		select MAX(movieInfoCode) from movieInfo 
+	</select>
+	
+
+</mapper> 
+  
+  

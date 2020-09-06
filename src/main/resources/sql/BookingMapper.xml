@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- userid안의 값과 booking table의 userid 일치하면 booking List 불러옴 -->
+<mapper namespace="com.show.movie.model.dao.BookingDao">
+	<select id="getAllbooking"
+		resultType="com.show.movie.model.domain.Booking">
+		select * from booking where userid=#{userid}
+	</select>
+	
+ 
+	<!-- booking과 movieinfo 테이블에서 movieInfoCode 같으면 movieinfocode가져옴 -->
+	<select id="getAllMovieinfo"
+		resultType="com.show.movie.model.domain.MovieInfo">
+		select movieInfoCode
+		from booking
+		inner join movieInfo
+		on
+		booking.movieinfoCode=movieInfo.movieInfoCode
+	</select>
+	<!-- movieInfo과 movie 테이블에서 movieCode같으면 movie 테이블의 movieName 가져오기 -->
+	<!-- <select id="getAllmovieName" resultType="movie"> select movieName from 
+		movieInfo inner join movie on movieInfo.movieCode=movie.movieCode </select> -->
+	<select id="getAllmovieName" resultType="movie">
+		select movie.movieName
+		from booking
+		inner join movieInfo
+		on booking.movieinfocode = movieInfo.movieinfocode
+		inner join movie
+		on movieInfo.moviecode = movie.moviecode
+	</select>
+
+
+
+
+
+
+
+</mapper>
+
+
+
